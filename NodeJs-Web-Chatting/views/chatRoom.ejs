@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="UTF-8">
+<meta name="viewport" content="text/html; charset=UTF-8" http-equiv='content-type'>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<style type="text/css">
+	.img-circle{
+		width: 50px; height: 50px;
+	}
+	.col-xs-6,#right-message-text,#right-alert-png {
+		padding-top: 15px;
+	}
+	.inline-form {
+	    border-radius: 10px;
+	}
+	#send-bar {
+	    position:absolute;
+	    bottom:0;
+	    width:90%;
+	    height:70px;  
+	}
+	body {
+		overflow-x:hidden;
+	}
+	#exit {
+    	margin-top: 480px;
+		position:fixed;
+	}
+</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+				<div class="row" style="margin-bottom: 150px;"></div>
+				<div class="row">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-4" style="border-right: 2px solid black;">
+						
+						<div class="row" style="overflow:auto; overflow-x: hidden; height:500px; ">
+							<div class="row inline-form" v-for="msg in msgs">
+								<div class="col-sm-3">{{msg.nickName}}</div>
+								<div class="col-sm-9">{{msg.msg}}</div>
+								<hr width="98%">
+							</div>
+						
+						</div>
+						<div class="row">
+							<div class="col-sm-9"> 
+								<input id="send-message"  type="text" class="form-control"	onkeydown="isEnterDown()" style="height:70px"/>
+							</div>
+							<div class="col-sm-3"> 
+								<input id="send-button" type="button" class="form-control" style="height:70px" value="전송">
+							</div>
+						</div>
+					</div>
+					<div id="" class="col-sm-2" style="overflow:auto; overflow-x: hidden; height:500px">
+						<div class="row">
+							<h3 class="text-center">대화 참여자</h3>
+						</div>
+						<div class="row inline-form" v-for="user in sameRoomUsers" >
+							<div class="col-sm-12 text-center"><h4>{{user}}</h4></div>
+							
+						</div>
+						<div class="row">
+							<input  id="exit" type="button" value="나가기">
+						</div>
+					</div>
+					<div class="col-sm-3"></div>
+				</div>
+		</div>
+	</div>
+	
+	<input id="my-nickName" type="hidden" value="<%=user.nickName%>">
+	<input id="now-roomId" type="hidden" value="<%=roomId%>">
+</body>
+<script src="http://localhost:90/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect('http://localhost:90');
+
+	var roomInfoVue = new Vue({
+		el: '.container-fluid',
+		data: {
+			sameRoomUsers: [],
+			msgs: [],
+			sendMessage : ''
+		},
+		methods: {
+		}
+	})
+
+	var paramJson = {
+		nickName : $("#my-nickName").val(),
+		roomId : $('#now-roomId').val(),
+		msg : ''
+	}
+
+	//최초 입력창 포커스
+	$(document).ready(function(){
+		$("#send-message").focus();
+	});
+
+	
+	//방 정보 요청
+	socket.emit('req roomInfos',paramJson);
+	socket.on('res roomInfos', (roomInfos) => {
+		roomInfoVue.sameRoomUsers = roomInfos.sameRoomUsers;
+		roomInfoVue.msgs = roomInfos.msgs
+	})
+	
+	//나가기 버튼
+	$('#exit').on('click', () => {
+		socket.emit('req exitRoom',paramJson);
+		location.href = "/lobby"
+	})
+	// 브라우저 종료/ 뒤로가기 
+	$(window).on("beforeunload", function() { 
+		socket.emit('req exitRoom',paramJson);
+	}) 
+
+	//메세지 보내기 
+	$('#send-button').on('click', () => {
+		sendMessage()
+	})
+
+	function isEnterDown() {
+		if(event.keyCode == 13)
+		{
+			sendMessage()
+		}
+	}
+	function sendMessage() {
+		paramJson.msg = $("#send-message").val();
+		socket.emit('req sendMessage',paramJson);
+		$("#send-message").val('');
+		$("#send-message").focus();
+	}
+
+</script>
+
+</html>

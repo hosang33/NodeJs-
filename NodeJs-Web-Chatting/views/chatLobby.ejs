@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="UTF-8">
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<style type="text/css">
+	.img-circle{
+		width: 50px; height: 50px;
+	}
+	.col-xs-6,#right-message-text,#right-alert-png {
+		padding-top: 15px;
+	}
+	.inline-form {
+	    border-radius: 10px;
+	}
+	#send-bar {
+	    position:absolute;
+	    bottom:0;
+	    width:90%;
+	    height:70px;  
+	}
+	body {
+		overflow-x:hidden;
+	}
+</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row" style="margin-bottom: 200px;"></div>
+		<div class="row text-center" ><h1>방 리스트</h1></div>
+		<div class="row" id="dd">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6" style="border: 1px black solid;">
+				<div class="row" id="room-list-div"  style="overflow:auto; overflow-x: hidden; height:500px;">
+					<div class="row inline-form text-center" style="border-bottom: black 1px solid ; padding-bottom: 20px;">
+						<div class="col-sm-3" style="top: 10px;"> 닉네임</div>
+						<div class="col-sm-6" style="top: 10px;">방 이름</div>
+						<div class="col-sm-3"></div>
+					</div>
+                    <div class="row inline-form text-center" v-for="room in roomLists">
+                        <div class="col-sm-3" >{{room.nickName}}</div>
+                        <div class="col-sm-6">{{room.roomtitle}}</div>
+						<div class="col-sm-3"><input class="form-control" id="join-room" type="button" value="참가하기" @click="joinRoom(room.roomId)"></div>
+                        <hr width="98%">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+				<div class="row text-center" style="margin-bottom: 20px;">
+					<%=user.nickName%>님 반갑습니다
+				</div>
+				<div class="row text-center" style="margin-bottom: 20px;">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6">
+						<input type="button" class="form-control" value="방 만들기" onclick="location.href='/room/create'">
+					</div>	
+					<div class="col-sm-3"></div>
+				</div>
+				<div class="row text-center" style="margin-bottom: 20px;">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6">
+						<input type="button" class="form-control" value="로그아웃" onclick="location.href='/login/logout'">
+					</div>	
+					<div class="col-sm-3"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="http://localhost:90/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect('http://localhost:90');
+
+	var roomListVue = new Vue({
+		el: '.container-fluid',
+		data: {
+			roomLists: []
+		},
+		methods: {
+			joinRoom : function(roomId) {
+				location.href="/room?roomId="+roomId;
+			}
+		}
+	})
+
+	socket.on('res roomList', (roomLists) => {
+		roomListVue.roomLists = roomLists;
+	})
+
+	
+	
+	
+</script>
+</html>

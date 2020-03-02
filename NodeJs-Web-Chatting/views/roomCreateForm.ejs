@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='content-type' content='text/html; charset=UTF-8'>
+    <title>Page Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row" style="margin-bottom: 150px;"></div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <form>
+                    <input id="form-user-nickName" type="hidden" value="<%=user.nickName %>"/>
+                    <input id="form-user-id" type="hidden" value="<%=user.id %>"/>
+                    <div class="form-group">
+                      <label>방 제목</label><input class="form-control" id="form-room-title" type="text" >
+                    </div>
+                    <div class="form-group">
+                      <input class="form-control" id="form-done-button" type="button" value="완료">
+                    </div>
+                   
+                </form>  
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+    </div>
+</body>
+<script src="http://localhost:90/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:90');
+    
+    $("#form-done-button").on('click',() => {
+        paramJson = {
+            nickName : $("#form-user-nickName").val(),
+            roomtitle : $("#form-room-title").val()
+        }
+
+        socket.emit('req createRoom',paramJson);
+        
+        socket.on('res roomId',(roomId) => {
+            location.href = "/room?roomId="+roomId;
+        });
+    })
+</script>
+</html>

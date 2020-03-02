@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='content-type' content='text/html; charset=UTF-8'>
+    <title>Page Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row" style="margin-bottom: 150px;"></div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <form action="/register" method="POST">
+                    <% if (locals.alert == 'IdDuplicate') { %>
+                        <div class="alert alert-danger">
+                          해당하는 아이디가 존재합니다.
+                        </div>
+                      <% } %>
+                      <% if (locals.alert == 'emptyForm') { %>
+                        <div class="alert alert-danger">
+                          입력칸을 다 채워주세요 
+                        </div>
+                      <% } %>
+                    <div class="form-group">
+                        <label>닉네임</label><input type="text" class="form-control" name="nickName">
+                    </div>
+                    <div class="form-group">
+                        <label>아이디</label><input type="text" class="form-control" name="id">
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label><input type="text" class="form-control" name="password">
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="제출" class="form-control">
+                    </div>
+                </form>  
+            </div>
+            <div class="col-sm-4"></div>
+
+        </div>
+    </div>
+</body>
+</html>
