@@ -13,11 +13,6 @@ const registerRouter = require('./router/register');
 const roomRouter = require('./router/room');
 const lobbyRouter = require('./router/lobby');
 
-const useSession = app.use(session({
-    secret : 'sangho',
-    resave: true,
-    saveUninitialized: true 
-}));
 
 app.use(express.static('public'));
 
@@ -25,6 +20,22 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 app.set('view engine', 'ejs');
+
+const useSession = app.use(session({
+    secret : 'sangho',
+    resave: true,
+    saveUninitialized: true 
+}));
+
+var interceptorAccepts = ["/", "/login", "/login/logout", "/register"];
+app.use(function(req, res, next) {
+    if(interceptorAccepts.indexOf(req.path) === -1) { //권한이 없는 요청주소일 떄 세션 존재 여부 확인 
+        if(req.session.user == null) {
+            res.render("loginForm",{alert : "session"})
+        } 
+    }
+    next();
+})
 
 app.use('/',indexRouter);
 app.use('/login',loginRouter);
@@ -39,6 +50,7 @@ app.listen(5000, (req, res) => {
 const port = server.listen(90)
 const io = SocketIo(port);
 socketRouter(io,useSession);
+
 
 
 const db = require("./config/keys").mongoURI;

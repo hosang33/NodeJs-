@@ -5,26 +5,18 @@ const bkfd2Password = require("pbkdf2-password");
 const hasher = bkfd2Password();
 
 router.post('/', (req, res) => {
-    User.findOne({ id: req.body.id}) 
-        .then(result => {
-            if(result) {
-                hasher({password : req.body.password, salt : result.salt}, (err, pass, salt, hash) => {
-                    if(hash === result.password) {
-                        req.session.user = {
-                            "nickName" : result.nick_name,
-                            "id" : req.body.id,
-                        }
-                        req.session.save()
-                        
-                        res.redirect("/lobby");                            //방 리스트 이동 
-                    } else {
-                        res.render("loginForm", {alert: 'fail'});         // 로그인 페이지(비번 틀림)
-                    }        
-                })
-            } else {
-                res.render("loginForm",{alert: 'fail'})                   //로그인 페이지(아이디 없음)
-            }
-        })
+    loginCheck()
+    
+    async function loginCheck() {
+        var findUser = await User.findOne({id: req.body.id});
+    
+        if(findUser) {
+           pwdSameCheck(req.body.password, findUser.password, findUser.salt, res);
+           createUserSession(req, findUser.nick_name, req.body.id);
+        } else {
+            res.render("loginForm", {alert: 'fail'})
+        }
+    }
 });
 
 router.get('/logout', (req, res) => {
@@ -32,4 +24,24 @@ router.get('/logout', (req, res) => {
     res.render("loginForm", {alert: 'logout' });
 });
 
+
+
+
+function pwdSameCheck(pwd,findPwd,salt,res) {
+    hasher({password : pwd, salt : salt}, (err, pass, salt, hash) => {
+        if(hash === findPwd) {
+            res.redirect("/lobby");      
+            return                      
+        } 
+        res.render("loginForm", {alert: 'fail'});            
+    })
+}
+
+function createUserSession(req,nickName,id) {
+    req.session.user = {
+        "nickName" : nickName,
+        "id" : id,
+    }
+    req.session.save()
+}
 module.exports = router;

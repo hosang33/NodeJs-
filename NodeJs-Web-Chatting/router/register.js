@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const bkfd2Password = require("pbkdf2-password");
-const hasher = bkfd2Password();
+const pbkfd2Password = require("pbkdf2-password");
+const hasher = pbkfd2Password();
 
 
 router.get('/', (req, res) => {
@@ -15,7 +15,7 @@ router.post('/', (req, res) => {
         res.render("register",{alert: 'emptyForm'});
         return 
     }
-    console.log(req.body)
+
     User.findOne({ id: req.body.id})
         .then( result => {
             if (result) {
