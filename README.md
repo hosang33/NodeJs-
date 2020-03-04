@@ -1,7 +1,7 @@
 # NodeJs-Web-Chatting
 
 ### 1. 사용언어 및 라이브러리
-##### NodeJs/ Ejs/ Socket.io/ Express/ mongoose/ pbkdf2-password
+##### NodeJs/ Vue.js/ jQuery/ Ejs/ Socket.io/ Express/ mongoose/ pbkdf2-password
 ### 2. 주요화면
 #### 1. 로그인
 ![](https://user-images.githubusercontent.com/57142305/75860670-968d1380-5e3f-11ea-9e7f-2e9135d8d35d.png)
