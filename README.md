@@ -1,6 +1,6 @@
 # NodeJs-Web-Chatting
 
-### 1. 개발 
+### 1. 개발도구들 
 ##### NodeJs/ Vue.js/ jQuery/ Ejs/ Bootstrap4/ Socket.io/ Express/ mongoose/ MongoDB Atlas/ pbkdf2-password
 ### 2. 주요화면
 #### 1. 로그인
